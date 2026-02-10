@@ -1,6 +1,7 @@
+namespace Backend.Models;
 using Microsoft.AspNetCore.Identity;
 
-public class AplicationUser : IdentityUser
+public class ApplicationUser : IdentityUser
 {
     public string? FullName {get; set;}
     public string? Bio {get; set;}
