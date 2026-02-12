@@ -52,7 +52,7 @@ public class AuthController : ControllerBase
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString() ?? string.Empty)
         };
         var key = new SymmetricSecurityKey(
-            Encoding.UTF32.GetBytes(_configuration["jwtSettings:Key"]!)
+            Encoding.UTF32.GetBytes(_configuration["JwtSettings:secretKey"]!)
         );
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
