@@ -23,11 +23,16 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register ([FromBody]RegisterDTO dto)
     {
+        if (dto.Password != dto.ConfirmPassword)
+        {
+            BadRequest ("As senhas não estão iguais tente. Tente novamente");
+        }
+
         var user = new ApplicationUser
         {
             UserName = dto.Email,
             Email = dto.Email,
-            FullName = dto.Name
+            FullName = dto.NameComplete
         };
     var result = await _userManager.CreateAsync(user, dto.Password);
         if (!result.Succeeded)
@@ -51,7 +56,7 @@ public class AuthController : ControllerBase
             new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
-        
+
         var key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(_configuration["JwtSettings:secretKey"]!)
         );
