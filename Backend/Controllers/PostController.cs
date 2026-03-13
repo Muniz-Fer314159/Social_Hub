@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using Backend.Data;
 using Backend.Models;
 
@@ -21,7 +22,7 @@ public class PostController: ControllerBase
 
     public async Task<IActionResult> CreatePostAsync([FromBody] CreatePost dto)
     {
-        var userId = User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         
         if(userId == null)
         {

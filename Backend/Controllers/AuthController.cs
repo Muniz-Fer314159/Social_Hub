@@ -47,20 +47,21 @@ public class AuthController : ControllerBase
         }
         var claims = new List<Claim>
         {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString() ?? string.Empty)
+            new Claim(ClaimTypes.NameIdentifier, user.Id),
+            new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
+        
         var key = new SymmetricSecurityKey(
-            Encoding.UTF32.GetBytes(_configuration["JwtSettings:secretKey"]!)
+            Encoding.UTF8.GetBytes(_configuration["JwtSettings:secretKey"]!)
         );
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: _configuration["jwtSettings:Issuer"],
-            audience: _configuration["jwtSettings: Audience"],
+            issuer: _configuration["JwtSettings:issuer"],
+            audience: _configuration["JwtSettings:audience"],
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(double.Parse(_configuration["jwtSettings:ExpiryInMinutes"]!)),
+            expires: DateTime.UtcNow.AddMinutes(double.Parse(_configuration["JwtSettings:ExpiryInMinutes"]!)),
             signingCredentials: creds
         );
         return Ok(new
