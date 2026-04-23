@@ -18,8 +18,8 @@ public class UserController : ControllerBase
 
     [HttpPut("Profile")]
     [Authorize]
-    
-public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfile dto)
+
+public async Task<IActionResult> UpdateProfile([FromForm] UpdateProfile dto)
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)
@@ -34,8 +34,24 @@ public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfile dto)
         }
 
         user.Bio = dto.Bio;
-        user.DateOfBirth = dto.DateOfBirth;
-        user.ProfilePictureUrl = dto.ProfilePictureUrl;
+        if (dto.DateOfBirth.HasValue)
+        {
+            user.DateOfBirth = dto.DateOfBirth.Value;
+        }
+        
+        if (dto.ProfilePictureUrl != null)
+    {
+        var fileName = Guid.NewGuid() + Path.GetExtension(dto.ProfilePictureUrl.FileName);
+
+        var path = Path.Combine("wwwroot/profilePictures", fileName);
+
+        using (var stream = new FileStream(path, FileMode.Create))
+        {
+            await dto.ProfilePictureUrl.CopyToAsync(stream);
+        }
+
+        user.ProfilePictureUrl = "/profilePictures/" + fileName;
+    }
 
             await _userManeger.UpdateAsync(user);
 

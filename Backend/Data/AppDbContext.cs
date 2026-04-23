@@ -15,6 +15,10 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.Entity<ApplicationUser>()
+            .Property(u => u.DateOfBirth)
+            .HasColumnType("date");
+
         //Configure relationships from model like
         modelBuilder.Entity<Like>()
             .HasKey(l => new { l.PostId, l.UserId });
